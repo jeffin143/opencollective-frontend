@@ -1,5 +1,5 @@
 # source: http://localhost:3060/graphql
-# timestamp: Sun Oct 06 2019 22:51:40 GMT+0100 (West Africa Standard Time)
+# timestamp: Mon Oct 07 2019 20:46:14 GMT+0100 (West Africa Standard Time)
 
 """
 Application model
@@ -1501,6 +1501,7 @@ type Mutation {
   ): UserDetails
   editConnectedAccount(connectedAccount: ConnectedAccountInputType!): ConnectedAccountType
   approveExpense(id: Int!): ExpenseType
+  unapproveExpense(id: Int!): ExpenseType
   rejectExpense(id: Int!): ExpenseType
   payExpense(
     id: Int!
