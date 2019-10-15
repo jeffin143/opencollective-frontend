@@ -9,6 +9,32 @@ import { pick } from 'lodash';
 import Currency from '../Currency';
 import ConnectPaypal from '../ConnectPaypal';
 import AddFundsForm from '../AddFundsForm';
+import CollectivePickerAsync from '../CollectivePickerAsync';
+import { CollectiveType } from '../../lib/constants/collectives';
+
+const SearchCollectivesQuery = gql`
+  query SearchCollective($term: String!, $types: [TypeOfCollective], $limit: Int, $hostCollectiveIds: [Int]) {
+    search(term: $term, types: $types, limit: $limit, hostCollectiveIds: $hostCollectiveIds, useAlgolia: false) {
+      id
+      collectives {
+        id
+        type
+        slug
+        name
+        imageUrl(height: 64)
+        stats {
+          id
+          balance
+          expenses {
+            id
+            pending
+            approved
+          }
+        }
+      }
+    }
+  }
+`;
 
 class CollectivePickerWithData extends React.Component {
   static propTypes = {
@@ -46,6 +72,10 @@ class CollectivePickerWithData extends React.Component {
       'addFunds.error.missingEmail': {
         id: 'addFunds.error.missingEmail',
         defaultMessage: 'Please provide an email address to identify the source of the money.',
+      },
+      placeholder: {
+        id: 'expenses.allCollectives',
+        defaultMessage: 'All Collectives',
       },
     });
   }
@@ -202,7 +232,7 @@ class CollectivePickerWithData extends React.Component {
   }
 
   render() {
-    const { host } = this.props;
+    const { host, intl } = this.props;
 
     this.hostCollective = host;
     if (!this.hostCollective) {
@@ -309,6 +339,15 @@ class CollectivePickerWithData extends React.Component {
                 />
               </h2>
             </div>
+            {collectives.length > 0 && (
+              <CollectivePickerAsync
+                placeholder={intl.formatMessage(this.messages.placeholder)}
+                searchQuery={SearchCollectivesQuery}
+                hostCollectiveIds={[host.id]}
+                types={[CollectiveType.COLLECTIVE, CollectiveType.EVENT]}
+              />
+            )}
+
             {collectives.length > 0 && (
               <div className="collectivesFilter">
                 <DropdownButton id="collectivePicker" bsStyle="default" title={selectedTitle} onSelect={this.onChange}>

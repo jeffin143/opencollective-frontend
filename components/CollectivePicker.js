@@ -29,22 +29,19 @@ const CollectiveTypesI18n = defineMessages({
  * Default label builder used to render a collective. For sections titles and custom options,
  * this will just return the default label.
  */
-const DefaultCollectiveLabel = ({ __collective_picker_collective__, label, value: collective }) =>
-  !__collective_picker_collective__ ? (
-    label
-  ) : (
-    <Flex alignItems="center">
-      <Avatar collective={collective} radius={28} />
-      <Flex flexDirection="column" ml={2}>
-        <Span fontSize="Caption" color="black.700">
-          {collective.name}
-        </Span>
-        <Span fontSize="Caption" color="black.500">
-          @{collective.slug}
-        </Span>
-      </Flex>
+const DefaultCollectiveLabel = ({ value: collective }) => (
+  <Flex alignItems="center">
+    <Avatar collective={collective} radius={28} />
+    <Flex flexDirection="column" ml={2}>
+      <Span fontSize="Caption" color="black.700">
+        {collective.name}
+      </Span>
+      <Span fontSize="Caption" color="black.500">
+        @{collective.slug}
+      </Span>
     </Flex>
-  );
+  </Flex>
+);
 
 DefaultCollectiveLabel.propTypes = {
   __collective_picker_collective__: PropTypes.bool,
@@ -109,10 +106,29 @@ class CollectivePicker extends React.PureComponent {
   });
 
   render() {
-    const { collectives, groupByType, customOptions, getDefaultOption, intl, sortFunc, ...props } = this.props;
+    const {
+      collectives,
+      groupByType,
+      customOptions,
+      getDefaultOption,
+      intl,
+      sortFunc,
+      formatOptionLabel,
+      ...props
+    } = this.props;
+
     const collectiveOptions = this.getOptionsFromCollectives(collectives, groupByType, sortFunc, intl);
     const allOptions = this.getAllOptions(collectiveOptions, customOptions);
-    return <StyledSelect options={allOptions} defaultValue={getDefaultOption(allOptions)} {...props} />;
+    return (
+      <StyledSelect
+        options={allOptions}
+        defaultValue={getDefaultOption(allOptions)}
+        formatOptionLabel={option =>
+          option.__collective_picker_collective__ ? formatOptionLabel(option) : option.label
+        }
+        {...props}
+      />
+    );
   }
 }
 

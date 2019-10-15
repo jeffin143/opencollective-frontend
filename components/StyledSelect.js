@@ -101,6 +101,8 @@ StyledSelect.propTypes = {
   disabled: PropTypes.bool,
   /** Alias for `disabled` */
   isDisabled: PropTypes.bool,
+  /** Rendered when there's no option to show */
+  noOptionsMessage: PropTypes.node,
   /** @ignore from injectIntl */
   intl: PropTypes.object,
   // Styled-system
